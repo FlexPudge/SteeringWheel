@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="SteeringWheel.Pages.ButtonXYPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SteeringWheel.Pages"
+      xmlns:vm="clr-namespace:SteeringWheel.ViewModels">
+    <UserControl.DataContext>
+        <vm:ButtonXYViewModel x:Name="xy" />
+    </UserControl.DataContext>
+
+    <Grid Grid.Row="1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <Button Focusable="False" Grid.Column="1" Background="Transparent" Command="{Binding CommandUp}" >
+            <Image Source="/Image/up.png" Stretch="Fill"
+                       MaxWidth="100" MaxHeight="100"/>
+        </Button>
+
+        <Button Focusable="False" Grid.Row="1" Grid.Column="1" Background="Transparent" Command="{Binding CommandDown}" >
+            <Image Source="/Image/down.png"
+                       MaxWidth="100" MaxHeight="100"/>
+        </Button>
+
+        <Button Focusable="False" Grid.Row="1" Background="Transparent" Command="{Binding CommandLeft}" >
+            <Image Source="/Image/left.png" Stretch="Uniform"
+                       MaxWidth="100" MaxHeight="100"/>
+        </Button>
+
+        <Button Focusable="False" Grid.Row="1" Grid.Column="2" Background="Transparent" Command="{Binding CommandRight}" >
+            <Image Source="/Image/right.png"
+                       MaxWidth="100" MaxHeight="100"/>
+        </Button>
+
+        
+    </Grid>
+</UserControl>
