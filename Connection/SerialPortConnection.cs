@@ -8,7 +8,7 @@ namespace SteeringWheel.Connection
     {
         private static SerialPort? _serialPort;
         static bool statusConnection = false;
-        public static void Connection(string name, TypeConnection typeConnection)
+        public static void Connection(string name, int baudRate)
         {
             if (_serialPort?.IsOpen == true)
             {
@@ -19,16 +19,7 @@ namespace SteeringWheel.Connection
             {
                 _serialPort = new SerialPort();
                 _serialPort.PortName = name;
-                switch (typeConnection)
-                {
-                    case TypeConnection.ComPort:
-                        _serialPort.BaudRate = 115200;
-                        break;
-                    case TypeConnection.Bluetooth:
-                        _serialPort.BaudRate = 9600;
-                        break;
-
-                }
+                _serialPort.BaudRate = baudRate;
                 _serialPort.Parity = Parity.None;
                 _serialPort.DataBits = 8;
                 _serialPort.StopBits = StopBits.One;
@@ -41,10 +32,11 @@ namespace SteeringWheel.Connection
         public static bool StatusConnection() => statusConnection;
         public static byte[] Response()
         {
-            if (statusConnection == true) 
+            byte[] buffer = new byte[0];
+            if (statusConnection == true)
             {
-                int bufferSize = _serialPort.BytesToRead;
-                byte [] buffer = new byte[bufferSize];
+                int bufferSize = _serialPort!.BytesToRead;
+                buffer = new byte[bufferSize];
                 int count = 0;
                 for (int i = 0; i < bufferSize; i++)
                 {
@@ -56,7 +48,7 @@ namespace SteeringWheel.Connection
                 }
                 return buffer;
             }
-            return null;
+            return buffer;
         }
         public static void Sender(byte[] message)
         {

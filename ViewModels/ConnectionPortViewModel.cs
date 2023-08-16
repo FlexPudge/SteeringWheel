@@ -5,6 +5,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace SteeringWheel.ViewModels
@@ -15,13 +16,18 @@ namespace SteeringWheel.ViewModels
         private int? _selectedBaudRate;
         private ObservableCollection<string>? _portName;
         private ICommand? connectedCommand;
-
+        private ObservableCollection<int>? _baudRate = new ObservableCollection<int>() {9600,115200 };
 
         public Action<bool>? Notify { get; internal set; }
         public ObservableCollection<string>? PortName
         {
             get => _portName;
             set => _portName = value;
+        }
+        public ObservableCollection<int>? BaudRate
+        {
+            get => _baudRate;
+            set => _baudRate = value;
         }
         public string? SelectedPort
         {
@@ -33,7 +39,6 @@ namespace SteeringWheel.ViewModels
             get { return _selectedBaudRate!; }
             set { _selectedBaudRate = value; }
         }
-
         public ICommand? ConnectedCommand
         {
             get
@@ -64,7 +69,7 @@ namespace SteeringWheel.ViewModels
             }
             if (SelectedPort != null)
             {
-                SerialPortConnection.Connection(SelectedPort, TypeConnection.Bluetooth);
+                SerialPortConnection.Connection(SelectedPort, SelectedBaudRate);
 
             }
             SerialPortConnection.Sender(Commands.CommandE2());
