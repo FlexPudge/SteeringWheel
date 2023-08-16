@@ -1,22 +1,20 @@
-﻿using SteeringWheel.Service;
+﻿using SteeringWheel.Connection;
+using SteeringWheel.Service;
+using SteeringWheel.Service.Buttons;
+using SteeringWheel.Views;
 using System;
 using System.Collections.ObjectModel;
-using System.IO.Ports;
-using System.Windows.Input;
-using System.Windows;
-using SteeringWheel.Service.Buttons;
-using SteeringWheel.Service.RadioButton;
-using SteeringWheel.Connection;
 using System.Threading;
+using System.Windows;
+using System.Windows.Input;
 
 namespace SteeringWheel.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private string _statusConnection;
-        private string? _selectedPort;
+        private string? _statusConnection;
         private double _progressBarValue;
-        private ObservableCollection<string> _portName;
+        private ConnectionPortView? _connectionPortView;
 
         #region координаты
         private double _coordValueX;
@@ -28,7 +26,7 @@ namespace SteeringWheel.ViewModels
         {
             get
             {
-                if (_coordValueX == null)
+                if (_coordValueX == 0)
                 {
                     _coordValueX = 0;
                     return _coordValueX;
@@ -45,7 +43,7 @@ namespace SteeringWheel.ViewModels
         {
             get
             {
-                if (_coordValueY == null)
+                if (_coordValueY == 0)
                 {
                     _coordValueY = 0;
                     return _coordValueY;
@@ -62,7 +60,7 @@ namespace SteeringWheel.ViewModels
         {
             get
             {
-                if (_coordValueZ == null)
+                if (_coordValueZ == 0)
                 {
                     _coordValueZ = 0;
                     return _coordValueZ;
@@ -79,7 +77,7 @@ namespace SteeringWheel.ViewModels
         {
             get
             {
-                if (_coordValueA == null)
+                if (_coordValueA == 0)
                 {
                     _coordValueA = 0;
                     return _coordValueA;
@@ -109,12 +107,7 @@ namespace SteeringWheel.ViewModels
                 _statusConnection = value;
                 OnPropertyChanged("StatusConnection");
             }
-        }
-        public string SelectedPort
-        {
-            get { return _selectedPort!; }
-            set { _selectedPort = value; }
-        }
+        }       
         public double ProgressBarValue
         {
             get => _progressBarValue;
@@ -125,21 +118,18 @@ namespace SteeringWheel.ViewModels
                 BroadcastStepValue.SetStepValue(ProgressBarValue);
             }
         }
-        public ObservableCollection<string> PortName
-        {
-            get => _portName;
-            set => _portName = value;
-        }
 
-        private ICommand? connectedPortCommand;
-        public ICommand ConnectedPortCommand
+        private ICommand? openConnectedViewCommand;
+        public ICommand OpenConnectedViewCommand
         {
             get
             {
-                return connectedPortCommand
-                    ?? (connectedPortCommand = new ActionCommand(() =>
+                return openConnectedViewCommand
+                    ?? (openConnectedViewCommand = new ActionCommand(() =>
                     {
-                        ConnectionPort();
+                        _connectionPortView = new ConnectionPortView();
+                        _connectionPortView.dataContextVM.Notify += CheckStatusConnection;
+                        _connectionPortView.Show();
                     }));
             }
         }
@@ -163,7 +153,7 @@ namespace SteeringWheel.ViewModels
             get
             {
                 this.keyDetectedCommand = this.keyDetectedCommand ?? new ActionCommand
-                    (x => SelectedKey(x.ToString()));
+                    (x => SelectedKey(x.ToString()!));
                 return this.keyDetectedCommand;
             }
         }
@@ -206,49 +196,18 @@ namespace SteeringWheel.ViewModels
                 enumRadio = value;
             }
         }
-
-        public MainViewModel()
+     
+        private void CheckStatusConnection(bool value)
         {
-            LoadPortName();
-        }
-        private void LoadPortName()
-        {
-            PortName = new ObservableCollection<string>();
-            var portsName = SerialPort.GetPortNames();
-            foreach (var portName in portsName)
-            {
-                PortName.Add(portName);
-            }
-        }
-        private void ConnectionPort()
-        {
-            if (SelectedPort == null)
-            {
-                MessageBox.Show("Выберите ComPort");
-                return;
-            }
-            if (SelectedPort != null)
-            {
-                switch (EnumRadio)
-                {
-                    case TypeConnection.ComPort:
-                        SerialPortConnection.Connection(SelectedPort, TypeConnection.ComPort);
-                        break;
-                    case TypeConnection.Bluetooth:
-                        SerialPortConnection.Connection(SelectedPort, TypeConnection.Bluetooth);
-                        break;
-                }
-            }
-            SerialPortConnection.Sender(Commands.CommandE2());
-            CheckStatusConnection();
-        }
-        private void CheckStatusConnection()
-        {
-            bool conn = SerialPortConnection.StatusConnection();
-            if (conn)
+            if (value)
             {
                 StatusConnection = "Есть подключение";
             }
+            else 
+            {
+                StatusConnection = "Нет подключения";
+            }
+            _connectionPortView!.Close();
         }
         private void UpdateCoordinates()
         {
@@ -265,7 +224,7 @@ namespace SteeringWheel.ViewModels
                 MessageBox.Show("Нет подключения");
                 return;
             }
-            if (response.Length != null)
+            if (response.Length != 0)
             {
                 byte[] coord = new byte[2];
                 ObservableCollection<double> Coordinates = new ObservableCollection<double>();

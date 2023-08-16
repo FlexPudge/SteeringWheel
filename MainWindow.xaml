@@ -4,17 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SteeringWheel"
-        xmlns:vm="clr-namespace:SteeringWheel.ViewModels"
         xmlns:cv="clr-namespace:SteeringWheel.Service.RadioButton"   
         xmlns:se="clr-namespace:SteeringWheel.Service"   
+        xmlns:vm ="clr-namespace:SteeringWheel.ViewModels"
         mc:Ignorable="d"
-        xmlns:pages ="clr-namespace:SteeringWheel.Pages"
         Title="Ручное управление" Height="500" Width="800"
         MinHeight="450" MinWidth="800">
     <Window.DataContext>
-        <vm:MainViewModel x:Name="ContextViewModel"/>
+        <vm:MainViewModel/>
     </Window.DataContext>
-
 
     <Window.InputBindings>
         <KeyBinding Command="{Binding KeyDetectedCommand}" Key="Up"
@@ -45,7 +43,10 @@
         </Grid.ColumnDefinitions>
 
         <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Grid.ColumnDefinitions>
+            <Button Content="Подключиться" FontSize="18" Padding="8"
+                    Command="{Binding OpenConnectedViewCommand}"
+                    />
+            <!--<Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
@@ -74,7 +75,7 @@
                 <Button Focusable="False" Margin="0,10" FontSize="18" 
                         Command="{Binding ConnectedPortCommand}"
                         Content="подключиться"/>
-            </StackPanel>
+            </StackPanel>-->
         </Grid>
 
         <StackPanel Grid.Column="1"
@@ -107,7 +108,7 @@
                 <RowDefinition/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <Frame Source="/Pages/ButtonXYPage.xaml" Focusable="False"/>
+            <Frame Source="/Views/ButtonsXYView.xaml" Focusable="False"/>
             <TextBlock Grid.Row="1" Text="Управление осями X и Y" Margin="10"
                        FontSize="16" VerticalAlignment="Center"
                        HorizontalAlignment="Center"/>
@@ -121,7 +122,7 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             
-            <Frame Source="/Pages/ButtonZPage.xaml" Focusable="False"/>
+            <Frame Source="/Views/ButtonsZView.xaml" Focusable="False"/>
 
             <TextBlock Grid.Row="1" Text="Управление осью Z" Margin="10"
                        FontSize="16" VerticalAlignment="Center"

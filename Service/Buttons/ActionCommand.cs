@@ -5,11 +5,11 @@ namespace SteeringWheel.Service.Buttons
 {
     internal class ActionCommand : ICommand
     {
-        public event EventHandler CanExecuteChanged;
-        private readonly Action _action;
-        Action<object> _executeDelegate;
+        public event EventHandler? CanExecuteChanged;
+        private readonly Action? _action;
+        Action<object>? _executeDelegate;
 
-        private static ActionCommand _instance = null;
+        private static ActionCommand? _instance = null;
         public static ActionCommand Instance
         {
             get
@@ -22,9 +22,9 @@ namespace SteeringWheel.Service.Buttons
             }
         }
 
-        public ActionCommand(Action<object> executeDelegate)
+        public ActionCommand(Action<object>? executeDelegate)
         {
-            _executeDelegate = executeDelegate;
+            _executeDelegate = executeDelegate!;
         }
 
         public ActionCommand(Action action)
@@ -36,17 +36,17 @@ namespace SteeringWheel.Service.Buttons
         {
         }
 
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
 
             if (_action != null)
                 _action();
 
             if (_action == null)
-                _executeDelegate(parameter);
+                _executeDelegate!(parameter!);
         }
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             return true;
         }
